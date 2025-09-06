@@ -1,0 +1,80 @@
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+import "./Register.css";
+
+function Register() {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("http://localhost:5000/auth/register", {
+        username,
+        email,
+        password,
+      });
+      setMessage(res.data.msg);
+
+      // If registration successful, redirect to login after 1 sec
+      if (res.data.msg === "Registration successful") {
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      }
+    } catch (err) {
+      setMessage("Registration Failed. Try again.");
+    }
+  };
+
+  return (
+    <div className="register-container">
+      <div className="register-card">
+        <h2 className="register-title">Create Account</h2>
+        <p className="register-subtitle">Sign up to get started</p>
+
+        <form onSubmit={handleRegister}>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            className="register-input"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="register-input"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="register-input"
+          />
+          <button type="submit" className="register-btn">
+            Register
+          </button>
+        </form>
+
+        {message && <p className="register-message">{message}</p>}
+
+        <p className="switch-text">
+          Already have an account? <Link to="/">Login here</Link>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default Register;

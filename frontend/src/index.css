@@ -1,0 +1,43 @@
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Apply a clean default font */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f7fa; /* Light background */
+  color: #333;
+  min-height: 100vh;
+}
+
+/* Links default style */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Button defaults */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+/* Input defaults */
+input {
+  font-family: inherit;
+  border: none;
+  outline: none;
+}
+
+/* Smooth animations globally */
+*,
+*::before,
+*::after {
+  transition: all 0.2s ease-in-out;
+}
