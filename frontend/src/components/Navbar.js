@@ -18,7 +18,7 @@ function Navbar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, type: "spring" }}
     >
-      <h3 className="navbar-title">To-Do Application</h3>
+      <h3 className="navbar-title">TaskWala</h3>
       <button className="logout-btn" onClick={handleLogout}>
         Logout
       </button>

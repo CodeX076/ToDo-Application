@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
-import "./Login.css";
+import "./Login.css"; 
+export const BASE_URL = "https://todo-backend-735k.onrender.com";
+
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -13,7 +15,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault(); 
     try {
-      const res = await axios.post("http://localhost:5000/auth/login", {
+      const res = await axios.post(`${BASE_URL}/auth/login`, {
         email,
         password,
       });

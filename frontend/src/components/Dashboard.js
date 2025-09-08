@@ -17,7 +17,7 @@ function Dashboard() {
   const fetchTasks = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/tasks", {
+      const res = await axios.get("https://todo-backend-735k.onrender.com/tasks", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(res.data);
@@ -34,7 +34,7 @@ function Dashboard() {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "http://localhost:5000/tasks",
+        "https://todo-backend-735k.onrender.com/tasks",
         { title: newTask },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -56,7 +56,7 @@ function Dashboard() {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/tasks/${taskId}`,
+        `https://todo-backend-735k.onrender.com/tasks/${taskId}`,
         { completed: status === 0 }, // toggle between 0 and 1
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -70,7 +70,7 @@ function Dashboard() {
   const deleteTask = async (taskId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/tasks/${taskId}`, {
+      await axios.delete(`https://todo-backend-735k.onrender.com/tasks/${taskId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchTasks();
