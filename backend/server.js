@@ -1,25 +1,27 @@
 const express = require("express");
 const cors = require("cors");
+require("dotenv").config(); // Load environment variables from .env
 
-const db = require("./db"); 
+const db = require("./db");
 const authRoutes = require("./routes/auth");
 const taskRoutes = require("./routes/tasks");
 
 const app = express();
 
-// ✅ Add these middlewares
+// Middleware
 app.use(cors());
-app.use(express.json());  // <-- This is important for JSON body
-app.use(express.urlencoded({ extended: true })); // Optional for form data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/auth", authRoutes);
 app.use("/tasks", taskRoutes);
 
-// ✅ Default route for testing
+// Default route for testing
 app.get("/", (req, res) => {
   res.send("Backend is working 🚀");
 });
 
-// Start Server
-app.listen(5000, () => console.log("🚀 Server running on port 5000"));
+// ✅ Use dynamic port for Render
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

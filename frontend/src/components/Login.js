@@ -30,8 +30,8 @@ function Login() {
 
   return (
     <div className="login-container">
+       <h1 className="app-heading">TaskWala</h1>
       
-    
     
       <motion.div
         className="login-card"
