@@ -1,18 +1,31 @@
 const mysql = require("mysql2");
 require("dotenv").config();
 
-const db = mysql.createConnection({
+// ✅ Use a connection pool instead of single connection
+const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
+  port: process.env.DB_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10,  // free tier safe limit
+  queueLimit: 0,
+  connectTimeout: 20000 // prevent timeouts
 });
-db.connect(err => {
+
+// ✅ Keep connection alive to avoid idle disconnects
+setInterval(() => {
+  pool.query("SELECT 1", (err) => {
+    if (err) console.error("Keep-alive error:", err);
+  });
+}, 60000); // ping every 60 seconds
+
+// ✅ Create tables if they do not exist
+pool.getConnection((err, connection) => {
   if (err) throw err;
   console.log("✅ MySQL Connected...");
 
-  // ✅ Create tables safely (only if not exists)
   const createUsersTable = `
     CREATE TABLE IF NOT EXISTS users (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -33,15 +46,17 @@ db.connect(err => {
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     )`;
 
-  db.query(createUsersTable, err => {
+  connection.query(createUsersTable, (err) => {
     if (err) console.error("❌ Error creating users table:", err);
     else console.log("✅ Users table ready");
   });
 
-  db.query(createTasksTable, err => {
+  connection.query(createTasksTable, (err) => {
     if (err) console.error("❌ Error creating tasks table:", err);
     else console.log("✅ Tasks table ready");
   });
+
+  connection.release();
 });
 
-module.exports = db;
+module.exports = pool;
