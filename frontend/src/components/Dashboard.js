@@ -3,6 +3,8 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import Navbar from "./Navbar";
 import "./Dashboard.css";
+export const BASE_URL = "https://todo-backend-735k.onrender.com";
+
 
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
@@ -17,7 +19,7 @@ function Dashboard() {
   const fetchTasks = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("https://todo-backend-735k.onrender.com/tasks", {
+      const res = await axios.get(`${BASE_URL}/tasks`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(res.data);
@@ -34,7 +36,7 @@ function Dashboard() {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "https://todo-backend-735k.onrender.com/tasks",
+        `${BASE_URL}/tasks`,
         { title: newTask },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -56,7 +58,7 @@ function Dashboard() {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `https://todo-backend-735k.onrender.com/tasks/${taskId}`,
+        `${BASE_URL}/tasks/${taskId}`,
         { completed: status === 0 }, // toggle between 0 and 1
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -70,7 +72,7 @@ function Dashboard() {
   const deleteTask = async (taskId) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`https://todo-backend-735k.onrender.com/tasks/${taskId}`, {
+      await axios.delete(`${BASE_URL}/tasks/${taskId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchTasks();
