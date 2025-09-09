@@ -17,6 +17,8 @@ router.post("/register", async (req, res) => {
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
 
+    // Corrected: Use 'userId' in the JWT payload
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
     res.json({ msg: "Registration successful" });
   } catch (err) {
     res.status(500).json({ msg: "Registration failed", error: err.message });
@@ -33,7 +35,8 @@ router.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ msg: "Invalid Credentials" });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    // Corrected: Use 'userId' in the JWT payload
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
     res.json({ token });
   } catch (err) {
     res.status(500).json({ msg: "Login failed", error: err.message });
