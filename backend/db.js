@@ -4,14 +4,11 @@ require("dotenv").config();
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(process.env.MONGO_URI);
 
     console.log("✅ MongoDB Connected...");
 
-    // If you want to log when DB connection closes or errors
+    // Optional: Log DB events
     mongoose.connection.on("disconnected", () => {
       console.log("❌ MongoDB Disconnected");
     });
