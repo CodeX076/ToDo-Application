@@ -25,7 +25,7 @@ function authenticateToken(req, res, next) {
 // =====================
 router.get("/", authenticateToken, async (req, res) => {
   try {
-    const tasks = await Task.find({ user: req.userId }).sort({ createdAt: -1 });
+    const tasks = await Task.find({ user_id: req.userId }).sort({ createdAt: -1 });
     res.json(tasks);
   } catch (err) {
     console.error("Get Tasks Error:", err);
@@ -41,7 +41,7 @@ router.post("/", authenticateToken, async (req, res) => {
     const { title } = req.body;
 
     const newTask = new Task({
-      user: req.userId,
+      user_id: req.userId,
       title,
       status: false,
     });
@@ -61,7 +61,7 @@ router.put("/:id", authenticateToken, async (req, res) => {
   try {
     const { status } = req.body;
     const task = await Task.findOneAndUpdate(
-      { _id: req.params.id, user: req.userId },
+      { _id: req.params.id, user_id: req.userId },
       { status },
       { new: true }
     );
@@ -81,7 +81,7 @@ router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     const task = await Task.findOneAndDelete({
       _id: req.params.id,
-      user: req.userId,
+      user_id: req.userId,
     });
 
     if (!task) return res.status(404).json({ message: "Task not found" });
