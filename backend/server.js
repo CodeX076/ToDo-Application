@@ -9,7 +9,13 @@ const taskRoutes = require("./routes/tasks");
 const app = express();
 
 // Middleware
-app.use(cors());
+
+app.use(cors({
+  origin: "https://to-do-application-green-ten.vercel.app ", // Replace with your Vercel frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

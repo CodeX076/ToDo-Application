@@ -27,7 +27,12 @@ function Register() {
         }, 1000);
       }
     } catch (err) {
-      setMessage("Registration Failed. Try again.");
+      // Check if the error response exists and has a message
+      if (err.response && err.response.data && err.response.data.msg) {
+        setMessage(err.response.data.msg);
+      } else {
+        setMessage("Registration Failed. An unexpected error occurred.");
+      }
     }
   };
 

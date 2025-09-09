@@ -1,89 +1,42 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User"); // Import User model
-require("dotenv").config();
+const User = require("../models/User");
 
 const router = express.Router();
 
-// =====================
-//  Register Route
-// =====================
+// REGISTER
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Check if user already exists
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ message: "User already exists" });
-    }
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ msg: "User already exists" });
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ username, email, password: hashedPassword });
+    await newUser.save();
 
-    // Create new user
-    user = new User({ username, email, password: hashedPassword });
-    await user.save();
-
-    res.status(201).json({ message: "User registered successfully" });
+    res.json({ msg: "Registration successful" });
   } catch (err) {
-    console.error("Register Error:", err);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ msg: "Registration failed", error: err.message });
   }
 });
 
-// =====================
-//  Login Route
-// =====================
+// LOGIN
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // Check if user exists
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid Credentials" });
-    }
+    if (!user) return res.status(400).json({ msg: "Invalid Credentials" });
 
-    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid Credentials" });
-    }
+    if (!isMatch) return res.status(400).json({ msg: "Invalid Credentials" });
 
-    // Create JWT Token
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET || "secretkey",
-      { expiresIn: "1h" }
-    );
-
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
     res.json({ token });
   } catch (err) {
-    console.error("Login Error:", err);
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
-// =====================
-//  Get Current User
-// =====================
-router.get("/me", async (req, res) => {
-  try {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-      return res.status(401).json({ message: "No token provided" });
-    }
-
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
-    const user = await User.findById(decoded.userId).select("-password");
-
-    res.json(user);
-  } catch (err) {
-    console.error("Get User Error:", err);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ msg: "Login failed", error: err.message });
   }
 });
 
