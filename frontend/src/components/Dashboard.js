@@ -42,10 +42,7 @@ function Dashboard() {
       );
 
       // Backend only sends { msg, id } → build full object manually
-      setTasks((prev) => [
-        { id: res.data.id, title: newTask, status: 0 },
-        ...prev,
-      ]);
+      setTasks((prev) => [res.data, ...prev]);  
 
       setNewTask(""); // Clear input field
     } catch (err) {
@@ -59,7 +56,7 @@ function Dashboard() {
       const token = localStorage.getItem("token");
       await axios.put(
         `${BASE_URL}/tasks/${taskId}`,
-        { completed: status === 0 }, // toggle between 0 and 1
+        { status: !status }, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchTasks();
@@ -110,23 +107,23 @@ function Dashboard() {
             {tasks.length > 0 ? (
               tasks.map((task) => (
                 <motion.div
-                  key={task.id}
-                  className={`task-item ${task.status === 1 ? "completed" : ""}`}
+                  key={task._id}
+                  className={`task-item ${task.status ? "completed" : ""}`}
                   initial={{ scale: 0.9 }}
                   animate={{ scale: 1 }}
                 >
                   <input
                     type="checkbox"
-                    checked={task.status === 1}
-                    onChange={() => toggleComplete(task.id, task.status)}
+                    checked={task.status}
+                    onChange={() => toggleComplete(task._id, task.status)}
                     className="task-checkbox"
                   />
-                  <span className={task.status === 1 ? "completed-task" : ""}>
+                  <span className={task.status ? "completed-task" : ""}>
                     {task.title}
                   </span>
                   <button
                     className="delete-btn"
-                    onClick={() => deleteTask(task.id)}
+                    onClick={() => deleteTask(task._id)}
                   >
                     ❌
                   </button>
