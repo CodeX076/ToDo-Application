@@ -1,86 +1,95 @@
 const express = require("express");
-const router = express.Router();
-const db = require("../db");
 const jwt = require("jsonwebtoken");
+const Task = require("../models/Task"); // Import Task model
+const User = require("../models/User"); // Import User model for validation
+require("dotenv").config();
 
-const SECRET = "todo_secret"; // same secret as in auth.js
+const router = express.Router();
 
-// Middleware to check token
-function verifyToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  if (!authHeader) return res.status(401).json({ msg: "No token provided" });
+// Middleware to check authentication
+function authenticateToken(req, res, next) {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "No token provided" });
 
-  const token = authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ msg: "Invalid token" });
-
-  jwt.verify(token, SECRET, (err, decoded) => {
-    if (err) return res.status(401).json({ msg: "Unauthorized" });
-    console.log("✅ Decoded token:", decoded);
-    req.userId = decoded.id;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
+    req.userId = decoded.userId;
     next();
-  });
+  } catch (err) {
+    return res.status(403).json({ message: "Invalid token" });
+  }
 }
 
-// ✅ GET all tasks for logged-in user
-router.get("/", verifyToken, (req, res) => {
-  db.query(
-    "SELECT * FROM tasks WHERE user_id = ? ORDER BY position ASC, created_at DESC",
-    [req.userId],
-    (err, results) => {
-      if (err) return res.status(500).json({ msg: "DB Error", error: err });
-      res.json(results);
-    }
-  );
-});
-// ✅ Add new task
-router.post("/", verifyToken, (req, res) => {
-  const { title } = req.body;
-  if (!title) return res.status(400).json({ msg: "Title is required" });
-
-  console.log("👉 Adding task:", title, "for user:", req.userId);
-
-  db.query(
-    "INSERT INTO tasks (user_id, title, status, position) VALUES (?, ?, 0, 0)",
-    [req.userId, title],
-    (err, result) => {
-      if (err) {
-        console.error("❌ MySQL Insert Error:", err);  // 👈 ADD THIS
-        return res.status(500).json({ msg: "DB Error", error: err });
-      }
-      res.json({
-        id: result.insertId,
-        title,
-        status: 0,
-        user_id: req.userId
-      });
-    }
-  );
+// =====================
+//  Get all tasks for logged-in user
+// =====================
+router.get("/", authenticateToken, async (req, res) => {
+  try {
+    const tasks = await Task.find({ user: req.userId }).sort({ createdAt: -1 });
+    res.json(tasks);
+  } catch (err) {
+    console.error("Get Tasks Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
 });
 
+// =====================
+//  Add new task
+// =====================
+router.post("/", authenticateToken, async (req, res) => {
+  try {
+    const { title } = req.body;
 
-// ✅ Update task completion
-router.put("/:id", verifyToken, (req, res) => {
-  const { completed } = req.body;
-  db.query(
-    "UPDATE tasks SET status = ? WHERE id = ? AND user_id = ?",
-    [completed ? 1 : 0, req.params.id, req.userId],
-    (err) => {
-      if (err) return res.status(500).json({ msg: "DB Error", error: err });
-      res.json({ msg: "Task updated" });
-    }
-  );
+    const newTask = new Task({
+      user: req.userId,
+      title,
+      status: false,
+    });
+
+    await newTask.save();
+    res.status(201).json(newTask);
+  } catch (err) {
+    console.error("Add Task Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
 });
 
-// ✅ Delete task
-router.delete("/:id", verifyToken, (req, res) => {
-  db.query(
-    "DELETE FROM tasks WHERE id = ? AND user_id = ?",
-    [req.params.id, req.userId],
-    (err) => {
-      if (err) return res.status(500).json({ msg: "DB Error", error: err });
-      res.json({ msg: "Task deleted" });
-    }
-  );
+// =====================
+//  Update task status
+// =====================
+router.put("/:id", authenticateToken, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const task = await Task.findOneAndUpdate(
+      { _id: req.params.id, user: req.userId },
+      { status },
+      { new: true }
+    );
+
+    if (!task) return res.status(404).json({ message: "Task not found" });
+    res.json(task);
+  } catch (err) {
+    console.error("Update Task Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// =====================
+//  Delete task
+// =====================
+router.delete("/:id", authenticateToken, async (req, res) => {
+  try {
+    const task = await Task.findOneAndDelete({
+      _id: req.params.id,
+      user: req.userId,
+    });
+
+    if (!task) return res.status(404).json({ message: "Task not found" });
+    res.json({ message: "Task deleted" });
+  } catch (err) {
+    console.error("Delete Task Error:", err);
+    res.status(500).json({ message: "Server Error" });
+  }
 });
 
 module.exports = router;
