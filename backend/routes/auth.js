@@ -19,9 +19,14 @@ router.post("/register", async (req, res) => {
 
     // Corrected: Use 'userId' in the JWT payload
     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-    res.status(201).json({ msg: "Registration successful", token });
+    return res.status(201).json({
+      msg: "Registration successful",
+      token
+    });
+
   } catch (err) {
-    res.status(500).json({ msg: "Registration failed", error: err.message });
+    console.error("Registration Error:", err.message);
+    return res.status(500).json({ msg: "Registration failed", error: err.message });
   }
 });
 
