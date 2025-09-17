@@ -2,7 +2,8 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  background: rgba(0, 0, 0, 0.6); /* Dark overlay */
+  background-blend-mode: overlay;
 }
 
 .dashboard-container {

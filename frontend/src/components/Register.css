@@ -3,12 +3,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  background: rgba(0, 0, 0, 0.5); /* dark overlay */
+  background-blend-mode: overlay;
   font-family: "Poppins", sans-serif;
 }
 
 .register-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.9); /* slight transparency */
   padding: 30px;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -45,7 +46,8 @@
 
 .register-input:focus {
   border-color: #2575fc;
-  box-shadow: 0 0 10px rgba(252, 80, 37, 0.5);
+  box-shadow: 0 0 12px rgba(37, 117, 252, 0.6);
+  transform: scale(1.02);
 }
 
 .register-btn {
@@ -61,7 +63,8 @@
 }
 
 .register-btn:hover {
-  background: #6a11cb;
+  transform: scale(1.05);
+  background: linear-gradient(45deg, #2575fc, #6a11cb);
 }
 
 .register-message {

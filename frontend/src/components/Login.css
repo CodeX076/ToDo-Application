@@ -4,13 +4,15 @@
   flex-direction: column; /* stack heading & card */
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  background: rgba(0,0,0,0.5); /* Dark overlay */
+  background-blend-mode: overlay;
   font-family: "Poppins", sans-serif;
   padding-top: 0px; /* some space for heading */
 }
 
 .login-card {
-  background: white;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
   padding: 30px;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -44,8 +46,8 @@
 }
 
 .input-field:focus {
-  border-color: #2575fc;
-  box-shadow: 0 0 10px rgba(252, 80, 37, 0.5);
+  border-color: #6a11cb;
+  box-shadow: 0 0 10px rgba(106, 17, 203, 0.5);
 }
 
 .login-btn {
@@ -61,7 +63,8 @@
 }
 
 .login-btn:hover {
-  background: #6a11cb;
+    transform: scale(1.05);
+  background: linear-gradient(45deg, #2575fc, #6a11cb);
 }
 
 .register-link {

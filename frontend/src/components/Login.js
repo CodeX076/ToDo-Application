@@ -35,8 +35,8 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-       <h1 className="app-heading">TaskWala</h1>
+    <div className="login-container" style={{ backgroundImage: 'url("https://source.unsplash.com/1600x900/?tasks,office")', backgroundSize: "cover", backgroundPosition: "center" }}>
+       <h1 className="app-heading">TaskWala 🚀</h1>
       
     
       <motion.div

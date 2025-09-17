@@ -79,7 +79,15 @@ function Dashboard() {
   };
 
   return (
-    <div className="dashboard-wrapper">
+          <div
+        className="dashboard-wrapper"
+        style={{
+          backgroundImage: 'url("https://source.unsplash.com/1600x900/?office,workspace,productivity")',
+          backgroundSize: "cover",
+          backgroundPosition: "center"
+        }}
+      >
+
       <Navbar />
       <div className="dashboard-container">
         <motion.div
@@ -88,7 +96,7 @@ function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, type: "spring" }}
         >
-          <h2 className="dashboard-title">Your Tasks</h2>
+          <h2 className="dashboard-title">📋 Your Tasks</h2>
           <form onSubmit={addTask} className="task-form">
             <input
               type="text"

@@ -37,7 +37,14 @@ function Register() {
   };
 
   return (
-    <div className="register-container">
+    <div
+  className="register-container"
+  style={{
+    backgroundImage: 'url("https://source.unsplash.com/1600x900/?planning,productivity")',
+    backgroundSize: "cover",
+    backgroundPosition: "center"
+  }}
+>
       <div className="register-card">
         <h2 className="register-title">Create Account</h2>
         <p className="register-subtitle">Sign up to get started</p>
