@@ -6,26 +6,7 @@ import Dashboard from "./components/Dashboard";
 import Loader from "./components/Loader";
 
 function App() {
-    const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const wakeUpBackend = async () => {
-      try {
-        // Ping the health endpoint first to wake up the backend
-        await fetch("https://todo-backend-735k.onrender.com");
-      } catch (err) {
-        console.error("Backend is not responding:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    wakeUpBackend();
-  }, []);
-
-  if (loading) {
-    return <Loader />;
-  }
+  
   return (
     <Router>
       <Routes>
