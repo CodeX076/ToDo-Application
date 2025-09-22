@@ -12,7 +12,7 @@ function App() {
     const wakeUpBackend = async () => {
       try {
         // Ping the health endpoint first to wake up the backend
-        await fetch("https://todo-backend-735k.onrender.com/health");
+        await fetch("https://todo-backend-735k.onrender.com");
       } catch (err) {
         console.error("Backend is not responding:", err);
       } finally {
